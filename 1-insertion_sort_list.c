@@ -1,45 +1,52 @@
 #include "sort.h"
+
+/**
+ * swap - function
+ * @a: address
+ * @b: address
+ * Return: void
+ */
+void swap(listint_t *a, listint_t *b)
+{
+	if (a->prev)
+		a->prev->next = b;
+	if (b->next)
+		b->next->prev = a;
+	a->next = b->next;
+	b->prev = a->prev;
+	a->prev = b;
+	b->next = a;
+
+}
+
 /**
  * insertion_sort_list - function
- * @list: Dobule linked list to sort
+ * @list: address of pointer
+ * Return: void
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *node;
+	listint_t *i, *j;
 
-	if (list == NULL || (*list)->next == NULL)
+	if (!list || !*list || !(*list)->next)
 		return;
-	node = (*list)->next;
-	while (node)
+	i = (*list)->next;
+	while (i)
 	{
-		while ((node->prev) && (node->prev->n > node->n))
+		j = i;
+		i = i->next;
+		while (j && j->prev)
 		{
-			node = swap_node(node, list);
-			print_list(*list);
+			if (j->prev->n > j->n)
+			{
+				swap(j->prev, j);
+				if (!j->prev)
+					*list = j;
+				print_list((const listint_t *)*list);
+			}
+			else
+				j = j->prev;
 		}
-		node = node->next;
-	}
-}
-/**
- *swap_node - function
- *@node: node
- *@list: node list
- *Return: return a pointer
- */
-listint_t *swap_node(listint_t *node, listint_t **list)
-{
-	listint_t *back = node->prev, *current = node;
-	/*NULL, 19, 48, 9, 71, 13, NULL*/
 
-	back->next = current->next;
-	if (current->next)
-		current->next->prev = back;
-	current->next = back;
-	current->prev = back->prev;
-	back->prev = current;
-	if (current->prev)
-		current->prev->next = current;
-	else
-		*list = current;
-	return (current);
+	}
 }
